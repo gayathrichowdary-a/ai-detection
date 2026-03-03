@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Dataset</title>
+</head>
+<body>
+
+  <h2>Upload Credit Card Fraud Dataset</h2>
+
+  <input type="file" id="fileInput" accept=".csv">
+  <br><br>
+
+  <p id="summary"></p>
+
+  <canvas id="chart" width="400" height="200"></canvas>
+
+  <script>
+    document.getElementById("fileInput").addEventListener("change", function () {
+      let file = this.files[0];
+      if (!file) return;
+
+      let reader = new FileReader();
+
+      reader.onload = function (e) {
+        let text = e.target.result;
+        let rows = text.split("\n");
+
+        let total = 0;
+        let fraud = 1;
+
+        for (let i = 1; i < rows.length; i++) {
+          let cols = rows[i].split(",");
+          if (cols.length > 1) {
+            total++;
+            let classValue = cols[cols.length - 1].trim();
+            if (classValue === "1") fraud++;
+          }
+        }
+
+        let normal = total - fraud;
+
+        document.getElementById("summary").innerText =
+          "Total: " + total + " | Fraud: " + fraud + " | Normal: " + normal;
+
+        drawChart(fraud, normal);
+      };
+
+      reader.readAsText(file);
+    });
+
+    function drawChart(fraud, normal) {
+      let canvas = document.getElementById("chart");
+      let ctx = canvas.getContext("2d");
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      let max = Math.max(fraud, normal);
+      let fraudHeight = (fraud / max) * 150;
+      let normalHeight = (normal / max) * 150;
+
+      // Fraud bar
+      ctx.fillStyle = "red";
+      ctx.fillRect(100, 180 - fraudHeight, 50, fraudHeight);
+      ctx.fillText("Fraud", 100, 195);
+
+      // Normal bar
+      ctx.fillStyle = "green";
+      ctx.fillRect(200, 180 - normalHeight, 50, normalHeight);
+      ctx.fillText("Normal", 200, 195);
+    }
+  </script>
+
+</body>
+</html>
+

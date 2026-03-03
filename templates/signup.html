@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sign Up</title>
+<style>
+body {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    background:#f4f6fb;
+    font-family:Arial;
+}
+.box {
+    background:white;
+    padding:30px;
+    width:350px;
+    border-radius:12px;
+    box-shadow:0 15px 35px rgba(0,0,0,.2);
+}
+input, button {
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+}
+button {
+    background:#22c55e;
+    border:none;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+<div class="box">
+<h2>Create Account</h2>
+
+<form method="POST" action="/signup">
+    <input type="email" name="email" required placeholder="Email">
+    <input type="password" name="password" required placeholder="Password">
+    <button type="submit">Sign Up</button>
+</form>
+
+<p>Already have account? <a href="/login">Login</a></p>
+</div>
+</body>
+</html>
