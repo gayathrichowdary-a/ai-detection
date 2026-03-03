@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Based Fraud Detection</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+}
+
+/* Header */
+.header {
+    background: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.logout {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+}
+.tab.active {
+    color: #2563eb;
+    border-bottom: 3px solid #2563eb;
+}
+
+/* Content */
+.content { padding: 20px; }
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+button {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.primary { background: #2563eb; color: white; }
+.secondary { background: #6b7280; color: white; }
+.download { background: #16a34a; color: white; }
+
+/* Transactions */
+.transaction {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Analysis */
+.analysis-box {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+.analysis-box div {
+    flex: 1;
+    background: #f9fafb;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Floating chatbot button */
+.chatbot-float {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+.chatbot-float img {
+    width: 38px;
+    height: 38px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h2>AI Based Fraud Detection</h2>
+    <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+    <div class="tab active" onclick="showTab('overview', this)">Overview</div>
+    <div class="tab" onclick="showTab('transactions', this)">Transactions</div>
+    <div class="tab" onclick="showTab('analysis', this)">Analysis</div>
+</div>
+
+<div class="content">
+
+<!-- OVERVIEW -->
+<div id="overview" class="card">
+    <h3>🧠 Overview</h3>
+    <p>
+        This AI-Based Fraud Detection System analyzes financial transactions
+        and identifies suspicious activity using risk-based rules.
+    </p>
+</div>
+
+<!-- TRANSACTIONS -->
+<div id="transactions" class="card" style="display:none">
+    <h3>Add Transaction</h3>
+
+    <input id="merchant" placeholder="Merchant (ex: Amazon)">
+    <input id="category" placeholder="Category (food / electronics)">
+    <input id="amount" type="number" placeholder="Amount">
+
+    <button class="primary" onclick="addTransaction()">Add Transaction</button>
+    <button class="secondary" onclick="clearFields()">Clear</button>
+    <button class="download" onclick="downloadCSV()">Download CSV</button>
+
+    <hr>
+    <h3>Transaction History</h3>
+    <div id="history"></div>
+</div>
+
+<!-- ANALYSIS -->
+<div id="analysis" class="card" style="display:none">
+    <h3>📊 Fraud Analysis</h3>
+    <canvas id="fraudChart" style="max-width:400px;margin:auto"></canvas>
+
+    <div class="analysis-box">
+        <div>
+            <h4>Fraud Rate</h4>
+            <p id="fraudRate">0%</p>
+        </div>
+        <div>
+            <h4>Average Risk Score</h4>
+            <p id="riskScore">0</p>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- 🤖 CHATBOT BUTTON -->
+<!-- 🤖 CHATBOT FLOATING BUTTON -->
+<a href="/chatbot" class="chatbot-float">
+    <img src="{{ url_for('static', filename='ai-chatbot.png') }}" alt="Chatbot">
+</a>
+<script>
+let transactions = [];
+let fraudChart;
+
+const merchantInput = document.getElementById("merchant");
+const categoryInput = document.getElementById("category");
+const amountInput = document.getElementById("amount");
+const fraudChartCanvas = document.getElementById("fraudChart");
+
+function showTab(id, el) {
+    ["overview","transactions","analysis"].forEach(t=>{
+        document.getElementById(t).style.display="none";
+    });
+    document.getElementById(id).style.display="block";
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    el.classList.add("active");
+    if(id==="analysis") renderChart();
+}
+
+function logout() {
+    window.location.href = "/";
+}
+
+function addTransaction(){
+    const merchant = merchantInput.value.trim();
+    const category = categoryInput.value.trim();
+    const amount = Number(amountInput.value);
+
+    if(!merchant || !category || !amount) {
+        alert("Fill all fields");
+        return;
+    }
+
+    let status = amount > 100000 ? "Fraud" : "Safe";
+    let risk = amount > 100000 ? 90 : amount > 50000 ? 60 : 20;
+
+    transactions.push({merchant, category, amount, status, risk});
+    renderHistory();
+    updateAnalytics();
+    clearFields();
+}
+
+function renderHistory(){
+    const history = document.getElementById("history");
+    history.innerHTML = "";
+    transactions.forEach(t=>{
+        history.innerHTML += `
+        <div class="transaction">
+            <strong>${t.status}</strong>
+            <span>${t.merchant} | ${t.category} | ₹${t.amount}</span>
+        </div>`;
+    });
+}
+
+function updateAnalytics(){
+    let total = transactions.length;
+    let frauds = transactions.filter(t=>t.status==="Fraud").length;
+    let avgRisk = transactions.reduce((s,t)=>s+t.risk,0)/(total||1);
+
+    document.getElementById("fraudRate").innerText =
+        total ? ((frauds/total)*100).toFixed(1)+"%" : "0%";
+    document.getElementById("riskScore").innerText = avgRisk.toFixed(0);
+}
+
+function renderChart(){
+    let frauds = transactions.filter(t=>t.status==="Fraud").length;
+    let safe = transactions.length - frauds;
+
+    if(fraudChart) fraudChart.destroy();
+    fraudChart = new Chart(fraudChartCanvas,{
+        type:"pie",
+        data:{
+            labels:["Fraud","Safe"],
+            datasets:[{data:[frauds,safe]}]
+        }
+    });
+}
+
+function clearFields(){
+    merchantInput.value = "";
+    categoryInput.value = "";
+    amountInput.value = "";
+}
+
+function downloadCSV(){
+    let csv ="Merchant,Category,Amount,Status,Risk\n";
+    transactions.forEach(t=>{
+        csv += `${t.merchant},${t.category},${t.amount},${t.status},${t.risk}\n`;
+    });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv]));
+    a.download = "transactions.csv";
+    a.click();
+}
+</script>
+
+</body>
+</html>

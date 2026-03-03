@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #eef3f9;
+            text-align: center;
+        }
+        .box {
+            background: white;
+            width: 350px;
+            margin: 100px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        .fraud {
+            color: red;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .normal {
+            color: green;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        button{
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Detection Result</h2>
+    <div id="output"></div>
+    <button onclick="location.href='dashboard.html'">Back to Dashboard</button>
+</div>
+
+<script>
+let result = localStorage.getItem("prediction");
+
+let outputDiv = document.getElementById("output");
+
+if(result === "Fraud Transaction"){
+    outputDiv.innerHTML = `<div class="fraud">🚨 FRAUD TRANSACTION</div>`;
+} else {
+    outputDiv.innerHTML = `<div class="normal">✅ NORMAL TRANSACTION</div>`;
+}
+</script>
+
+</body>
+</html>

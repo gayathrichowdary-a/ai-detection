@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detect Fraud</title>
+</head>
+<body>
+
+<h2>Fraud Detection</h2>
+<button onclick="detect()">Test Transaction</button>
+
+<script>
+async function detect() {
+    const data = {
+        features: [
+            0,0,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,0,50
+        ]
+    };
+
+    try {
+        const res = await fetch("http://127.0.0.1:5000/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        alert(result.result);
+    } catch (err) {
+        alert("❌ Backend not connected");
+    }
+}
+</script>
+
+</body>
+</html>

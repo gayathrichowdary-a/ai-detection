@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transaction History</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f8;
+            padding: 40px;
+            text-align: center;
+        }
+
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .fraud {
+            color: red;
+            font-weight: bold;
+        }
+
+        .normal {
+            color: green;
+            font-weight: bold;
+        }
+
+        button {
+            margin: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Transaction History</h2>
+
+<button onclick="downloadCSV()">Download CSV</button>
+<button onclick="goBack()">Back to Dashboard</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Amount (₹)</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+const history = JSON.parse(localStorage.getItem("transactions")) || [];
+const tbody = document.getElementById("tableBody");
+
+history.forEach(tx => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td>${tx.time}</td>
+        <td>${tx.amount}</td>
+        <td class="${tx.result === 'FRAUD' ? 'fraud' : 'normal'}">${tx.result}</td>
+    `;
+    tbody.appendChild(row);
+});
+
+function goBack() {
+    window.location.href = "dashboard.html";
+}
+
+function downloadCSV() {
+    let csv = "Time,Amount,Result\n";
+    history.forEach(tx => {
+        csv += `${tx.time},${tx.amount},${tx.result}\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "transaction_history.csv";
+    a.click();
+}
+</script>
+
+</body>
+</html>
