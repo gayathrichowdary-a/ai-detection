@@ -16,10 +16,18 @@ font-family:"Segoe UI",sans-serif;
 
 body{
 display:flex;
-background:#0f172a;
 color:white;
-}
+min-height:100vh;
 
+/* AI background image */
+background: 
+linear-gradient(rgba(10,15,30,0.85), rgba(10,15,30,0.90)),
+url("{{ url_for('static', filename='fraud-bg.jpg') }}");
+
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
 /* SIDEBAR */
 
 .sidebar{
