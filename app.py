@@ -22,7 +22,7 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
-        if email == "admin@gmail.com" and password == "1234":
+        if(email == "admin@gmail.com"or  email=="23b61a7202@nmrec.edu.in") and password == "admin123":
             return redirect("/dashboard")
 
         else:
