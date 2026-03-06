@@ -5,9 +5,21 @@ app = Flask(__name__)
 # --------------------
 # LOGIN PAGE (MAIN LINK)
 # --------------------
-@app.route("/")
-@app.route("/login")
+@app.route("/login", methods=["GET","POST"])
 def login():
+
+    if request.method == "POST":
+
+        email = request.form["email"]
+        password = request.form["password"]
+
+        # simple demo login
+        if email == "admin@gmail.com" and password == "1234":
+            return redirect("/dashboard")
+
+        else:
+            return "Invalid Login"
+
     return render_template("login.html")
 
 

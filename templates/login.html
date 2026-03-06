@@ -72,10 +72,6 @@ font-weight:bold;
 cursor:pointer;
 }
 
-button:hover{
-opacity:.9;
-}
-
 .signup{
 margin-top:10px;
 font-size:14px;
@@ -102,21 +98,14 @@ text-decoration:none;
 <h2>Fraud Detection AI</h2>
 <p>Secure Login Portal</p>
 
-<form method="GET" action="/dashboard">
-<form action="/dashboard" method="POST"></form>
+<form action="/login" method="POST">
+
 <input type="email" name="email" placeholder="Email" required>
 
 <input type="password" name="password" placeholder="Password" required>
 
 <button type="submit">Sign In</button>
 
-</form>
-
-<form action="/login" method="POST">
-    <input type="email" name="email" placeholder="Enter Email" required>
-    <input type="password" name="password" placeholder="Enter Password" required>
-
-    <button type="submit">Sign In</button>
 </form>
 
 <div class="signup">
