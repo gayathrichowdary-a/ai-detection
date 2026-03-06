@@ -1,9 +1,18 @@
 from flask import Flask, render_template, request, redirect, jsonify
+import os
 
 app = Flask(__name__)
 
 # --------------------
-# LOGIN PAGE (MAIN LINK)
+# HOME ROUTE (IMPORTANT FOR RENDER)
+# --------------------
+@app.route("/")
+def home():
+    return redirect("/login")
+
+
+# --------------------
+# LOGIN PAGE
 # --------------------
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -13,7 +22,6 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
-        # simple demo login
         if email == "admin@gmail.com" and password == "1234":
             return redirect("/dashboard")
 
@@ -34,7 +42,7 @@ def signup():
 
 
 # --------------------
-# DASHBOARD PAGE  (THIS FIXES YOUR ERROR)
+# DASHBOARD PAGE
 # --------------------
 @app.route("/dashboard")
 def dashboard():
@@ -71,7 +79,6 @@ def chat():
 
     return jsonify({"reply": reply})
 
-import os
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
