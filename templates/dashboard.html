@@ -14,111 +14,29 @@ box-sizing:border-box;
 font-family:"Segoe UI",sans-serif;
 }
 
-/* UPDATED BODY */
+/* SIMPLE BODY */
 
 body{
-display:flex;
-min-height:100vh;
+background:#0f172a;
 color:white;
-
-/* AI blue gradient background */
-background: linear-gradient(135deg,#021024,#052659,#1b3b6f,#052659);
-background-size:cover;
-background-attachment:fixed;
-}
-
-/* UPDATED SIDEBAR */
-
-.sidebar{
-width:230px;
-height:100vh;
-background:linear-gradient(180deg,#020617,#0f172a,#1e293b);
-padding:25px;
-position:fixed;
-border-right:1px solid #334155;
-}
-
-.sidebar h2{
-color:#6366f1;
-margin-bottom:40px;
-}
-
-/* UPDATED SIDEBAR BUTTON */
-
-.sidebar a{
-display:block;
-color:#cbd5f1;
-text-decoration:none;
-padding:12px;
-margin-bottom:10px;
-border-radius:8px;
-transition:.3s;
-}
-
-.sidebar a:hover{
-background:#2563eb;
-transform:translateX(5px);
+padding:30px;
 }
 
 /* MAIN */
 
 .main{
-margin-left:230px;
-padding:30px;
-width:100%;
+max-width:900px;
+margin:auto;
 }
 
-/* HEADER */
-
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:30px;
-}
-
-.header h2{
-font-size:26px;
-color:#a5b4fc;
-}
-
-.logout{
-background:#ef4444;
-border:none;
-color:white;
-padding:8px 16px;
-border-radius:6px;
-cursor:pointer;
-}
-
-/* TABS */
-
-.tabs{
-display:flex;
-gap:30px;
-margin-bottom:25px;
-}
-
-.tab{
-cursor:pointer;
-padding:10px 15px;
-border-radius:6px;
-color:#94a3b8;
-}
-
-.tab.active{
-background:#6366f1;
-color:white;
-}
-
-/* UPDATED CARD */
+/* CARD */
 
 .card{
-background:rgba(15,23,42,0.85);
+background:#1e293b;
 padding:25px;
 border-radius:12px;
-backdrop-filter:blur(8px);
-box-shadow:0 10px 25px rgba(0,0,0,0.6);
+box-shadow:0 10px 25px rgba(0,0,0,0.5);
+margin-bottom:30px;
 }
 
 /* INPUT */
@@ -206,17 +124,6 @@ width:38px;
 
 <body>
 
-<div class="sidebar">
-
-<h2>AI Fraud</h2>
-
-<a href="#">Dashboard</a>
-<a href="#">Transactions</a>
-<a href="#">Analysis</a>
-<a href="#">Reports</a>
-
-</div>
-
 <div class="main">
 
 <div id="overview" class="card">
@@ -224,8 +131,8 @@ width:38px;
 <h3>🧠 AI Fraud Detection Dashboard</h3>
 
 <p>
-Welcome to the <b>AI-Based Fraud Detection System</b>.  
-This intelligent platform monitors financial transactions and identifies suspicious activity using 
+Welcome to the <b>AI-Based Fraud Detection System</b>.
+This intelligent platform monitors financial transactions and identifies suspicious activity using
 risk-based analytics and machine learning techniques.
 </p>
 
@@ -234,7 +141,7 @@ risk-based analytics and machine learning techniques.
 <h3>🔍 System Overview</h3>
 
 <p>
-The system evaluates transaction behavior such as merchant type, transaction amount, 
+The system evaluates transaction behavior such as merchant type, transaction amount,
 and spending patterns to detect potentially fraudulent activities in real time.
 </p>
 
@@ -265,7 +172,7 @@ By analyzing these patterns, the system assigns a <b>risk score</b> and classifi
 
 <!-- TRANSACTIONS -->
 
-<div id="transactions" class="card" style="display:none">
+<div id="transactions" class="card">
 
 <h3>Add Transaction</h3>
 
@@ -286,7 +193,7 @@ By analyzing these patterns, the system assigns a <b>risk score</b> and classifi
 
 <!-- ANALYSIS -->
 
-<div id="analysis" class="card" style="display:none">
+<div id="analysis" class="card">
 
 <h3>📊 Fraud Analysis</h3>
 
@@ -344,6 +251,7 @@ transactions.push({merchant,category,amount,status,risk});
 
 renderHistory();
 updateAnalytics();
+renderChart();
 clearFields();
 
 }
