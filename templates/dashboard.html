@@ -7,940 +7,520 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
-  --bg: #080c14;
-  --surface: #0d1424;
-  --surface2: #111827;
-  --border: rgba(99,179,255,0.12);
-  --accent: #3b82f6;
-  --accent2: #06b6d4;
-  --danger: #ef4444;
-  --warn: #f59e0b;
-  --success: #10b981;
-  --text: #e2e8f0;
-  --text-dim: #64748b;
-  --text-muted: #334155;
-  --glow: rgba(59,130,246,0.15);
+  --bg:#080c14; --surface:#0d1424; --surface2:#111827;
+  --border:rgba(99,179,255,0.12); --accent:#3b82f6; --accent2:#06b6d4;
+  --danger:#ef4444; --warn:#f59e0b; --success:#10b981;
+  --text:#e2e8f0; --text-dim:#64748b; --text-muted:#334155;
 }
-
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* GRID BG */
-body::before {
-  content:'';
-  position:fixed;
-  inset:0;
-  background-image:
-    linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events:none;
-  z-index:0;
-}
-
-/* TOP GLOW */
-body::after {
-  content:'';
-  position:fixed;
-  top:-200px;
-  left:50%;
-  transform:translateX(-50%);
-  width:800px;
-  height:400px;
-  background: radial-gradient(ellipse, rgba(59,130,246,0.12) 0%, transparent 70%);
-  pointer-events:none;
-  z-index:0;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 
 /* HEADER */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(8,12,20,0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 64px;
-}
-
-.header-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 0 20px rgba(59,130,246,0.4);
-}
-
-.logo-text {
-  font-family: 'Space Mono', monospace;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: white;
-}
-
-.logo-sub {
-  font-size: 11px;
-  color: var(--text-dim);
-  font-family: 'Space Mono', monospace;
-}
-
-.header-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--success);
-  font-family: 'Space Mono', monospace;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--success);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 8px var(--success);
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.8); }
-}
-
-.header-time {
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
-  color: var(--text-dim);
-}
+.header{position:sticky;top:0;z-index:100;background:rgba(8,12,20,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 30px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 20px rgba(59,130,246,0.4);}
+.logo-text{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;}
+.logo-sub{font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace;}
+.header-right{display:flex;align-items:center;gap:16px;}
+.status-pill{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--success);font-family:'Space Mono',monospace;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);padding:5px 12px;border-radius:20px;}
+.dot{width:7px;height:7px;background:var(--success);border-radius:50%;animation:pulse 2s infinite;box-shadow:0 0 6px var(--success);}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+.user-badge{font-size:12px;color:var(--text-dim);font-family:'Space Mono',monospace;}
+.clock{font-family:'Space Mono',monospace;font-size:12px;color:var(--text-dim);}
+.logout-btn{font-size:12px;color:var(--danger);text-decoration:none;font-family:'Space Mono',monospace;border:1px solid rgba(239,68,68,0.3);padding:5px 12px;border-radius:6px;transition:all 0.2s;}
+.logout-btn:hover{background:rgba(239,68,68,0.1);}
 
 /* LAYOUT */
-.layout {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  min-height: calc(100vh - 64px);
-}
+.layout{position:relative;z-index:1;display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 64px);}
 
 /* SIDEBAR */
-.sidebar {
-  border-right: 1px solid var(--border);
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: rgba(13,20,36,0.6);
-}
+.sidebar{border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;gap:4px;background:rgba(13,20,36,0.5);}
+.sidebar-label{font-size:10px;color:var(--text-muted);font-family:'Space Mono',monospace;letter-spacing:0.15em;text-transform:uppercase;padding:14px 12px 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text-dim);transition:all 0.2s;border:1px solid transparent;text-decoration:none;}
+.nav-item:hover,.nav-item.active{background:rgba(59,130,246,0.08);color:var(--accent);border-color:rgba(59,130,246,0.2);}
+.nav-icon{width:18px;text-align:center;}
+.threat-card{margin-top:auto;background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(245,158,11,0.05));border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:14px;}
+.threat-label{font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace;letter-spacing:0.1em;margin-bottom:8px;}
+.threat-value{font-size:26px;font-weight:700;font-family:'Space Mono',monospace;color:var(--danger);}
+.threat-bar{height:3px;background:var(--text-muted);border-radius:2px;margin-top:8px;overflow:hidden;}
+.threat-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--warn),var(--danger));transition:width 1s ease;}
 
-.sidebar-label {
-  font-size: 10px;
-  color: var(--text-muted);
-  font-family: 'Space Mono', monospace;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding: 16px 12px 8px;
-}
+/* MAIN */
+.main{padding:24px 28px;display:flex;flex-direction:column;gap:20px;}
 
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--text-dim);
-  transition: all 0.2s;
-  border: 1px solid transparent;
-  text-decoration: none;
-}
-
-.nav-item:hover, .nav-item.active {
-  background: rgba(59,130,246,0.08);
-  color: var(--accent);
-  border-color: rgba(59,130,246,0.2);
-}
-
-.nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
-
-/* THREAT METER SIDEBAR */
-.threat-card {
-  margin-top: auto;
-  background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(245,158,11,0.05));
-  border: 1px solid rgba(239,68,68,0.2);
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.threat-label {
-  font-size: 11px;
-  color: var(--text-dim);
-  font-family: 'Space Mono', monospace;
-  letter-spacing: 0.1em;
-  margin-bottom: 10px;
-}
-
-.threat-value {
-  font-size: 28px;
-  font-weight: 700;
-  font-family: 'Space Mono', monospace;
-  color: var(--danger);
-}
-
-.threat-bar {
-  height: 4px;
-  background: var(--text-muted);
-  border-radius: 2px;
-  margin-top: 10px;
-  overflow: hidden;
-}
-
-.threat-fill {
-  height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--warn), var(--danger));
-  transition: width 1s ease;
-}
-
-/* MAIN CONTENT */
-.main {
-  padding: 30px 35px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  overflow-y: auto;
-}
-
-/* STAT CARDS ROW */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.3s, transform 0.2s;
-}
-
-.stat-card:hover {
-  border-color: rgba(59,130,246,0.3);
-  transform: translateY(-2px);
-}
-
-.stat-card::before {
-  content:'';
-  position:absolute;
-  top:0; left:0; right:0;
-  height:2px;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.stat-card:hover::before { opacity: 1; }
-
-.stat-label {
-  font-size: 11px;
-  color: var(--text-dim);
-  font-family: 'Space Mono', monospace;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.stat-value {
-  font-size: 30px;
-  font-weight: 700;
-  font-family: 'Space Mono', monospace;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-.stat-delta {
-  font-size: 12px;
-  color: var(--text-dim);
-}
-
-.stat-delta.up { color: var(--danger); }
-.stat-delta.down { color: var(--success); }
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;transition:all 0.2s;position:relative;overflow:hidden;}
+.stat-card:hover{border-color:rgba(59,130,246,0.3);transform:translateY(-2px);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity 0.3s;}
+.stat-card:hover::before{opacity:1;}
+.stat-label{font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.stat-value{font-size:28px;font-weight:700;font-family:'Space Mono',monospace;line-height:1;margin-bottom:6px;}
+.stat-sub{font-size:11px;color:var(--text-dim);}
 
 /* CONTENT GRID */
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 24px;
-}
+.content-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;}
 
 /* PANEL */
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:13px;font-weight:600;font-family:'Space Mono',monospace;letter-spacing:0.04em;display:flex;align-items:center;gap:8px;}
+.panel-badge{font-size:10px;background:rgba(59,130,246,0.12);color:var(--accent);border:1px solid rgba(59,130,246,0.25);padding:2px 8px;border-radius:20px;font-family:'Space Mono',monospace;}
+.panel-body{padding:20px;}
 
-.panel-header {
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.panel-title {
-  font-size: 13px;
-  font-weight: 600;
-  font-family: 'Space Mono', monospace;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.panel-badge {
-  font-size: 10px;
-  background: rgba(59,130,246,0.15);
-  color: var(--accent);
-  border: 1px solid rgba(59,130,246,0.3);
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-family: 'Space Mono', monospace;
-}
-
-.panel-body { padding: 22px; }
-
-/* ADD TRANSACTION FORM */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-field label {
-  font-size: 11px;
-  color: var(--text-dim);
-  font-family: 'Space Mono', monospace;
-  letter-spacing: 0.08em;
-}
-
-.form-field input {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 14px;
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-field input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-}
-
-.form-field input::placeholder { color: var(--text-muted); }
-
-.form-field.full { grid-column: 1 / -1; }
-
-.btn-row {
-  display: flex;
-  gap: 10px;
-}
-
-.btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: white;
-  box-shadow: 0 4px 12px rgba(59,130,246,0.3);
-}
-
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(59,130,246,0.4);
-}
-
-.btn-secondary {
-  background: var(--surface2);
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-}
-
-.btn-secondary:hover { color: var(--text); border-color: rgba(99,179,255,0.3); }
-
-.btn-success {
-  background: rgba(16,185,129,0.15);
-  color: var(--success);
-  border: 1px solid rgba(16,185,129,0.3);
-}
-
-.btn-success:hover { background: rgba(16,185,129,0.25); }
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field label{font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace;letter-spacing:0.08em;}
+.form-field input{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.form-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,0.1);}
+.form-field input::placeholder{color:var(--text-muted);}
+.form-field.full{grid-column:1/-1;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+.btn{display:flex;align-items:center;gap:5px;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;box-shadow:0 4px 12px rgba(59,130,246,0.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,0.4);}
+.btn-secondary{background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);}
+.btn-secondary:hover{color:var(--text);}
+.btn-success{background:rgba(16,185,129,0.12);color:var(--success);border:1px solid rgba(16,185,129,0.25);}
+.btn-success:hover{background:rgba(16,185,129,0.2);}
+.btn-ai{background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(59,130,246,0.2));color:#a78bfa;border:1px solid rgba(139,92,246,0.3);}
+.btn-ai:hover{background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(59,130,246,0.3));}
 
 /* TRANSACTION LIST */
-.tx-list { display: flex; flex-direction: column; }
+.tx-list{display:flex;flex-direction:column;max-height:320px;overflow-y:auto;}
+.tx-item{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);transition:background 0.2s;animation:slideIn 0.3s ease;cursor:pointer;}
+.tx-item:hover{background:rgba(59,130,246,0.04);}
+.tx-item:last-child{border-bottom:none;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
+.tx-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.tx-dot.fraud{background:var(--danger);box-shadow:0 0 7px var(--danger);}
+.tx-dot.safe{background:var(--success);box-shadow:0 0 7px var(--success);}
+.tx-dot.warn{background:var(--warn);box-shadow:0 0 7px var(--warn);}
+.tx-merchant{font-weight:600;font-size:13px;}
+.tx-meta{font-size:11px;color:var(--text-dim);font-family:'Space Mono',monospace;}
+.tx-amount{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;}
+.tx-badge{font-size:9px;font-family:'Space Mono',monospace;padding:2px 8px;border-radius:20px;font-weight:700;}
+.tx-badge.fraud{background:rgba(239,68,68,0.12);color:var(--danger);border:1px solid rgba(239,68,68,0.25);}
+.tx-badge.safe{background:rgba(16,185,129,0.12);color:var(--success);border:1px solid rgba(16,185,129,0.25);}
+.tx-badge.warn{background:rgba(245,158,11,0.12);color:var(--warn);border:1px solid rgba(245,158,11,0.25);}
+.tx-empty{padding:30px 20px;text-align:center;color:var(--text-muted);font-size:12px;font-family:'Space Mono',monospace;}
 
-.tx-item {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 22px;
-  border-bottom: 1px solid var(--border);
-  transition: background 0.2s;
-  animation: slideIn 0.3s ease;
-}
+/* CHART */
+.chart-wrap{position:relative;max-width:180px;margin:0 auto 16px;}
+.chart-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+.chart-center-val{font-size:22px;font-weight:700;font-family:'Space Mono',monospace;color:var(--danger);}
+.chart-center-lbl{font-size:9px;color:var(--text-dim);font-family:'Space Mono',monospace;}
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.metric-box{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px;text-align:center;}
+.metric-box-lbl{font-size:9px;color:var(--text-dim);font-family:'Space Mono',monospace;letter-spacing:0.08em;margin-bottom:5px;}
+.metric-box-val{font-size:20px;font-weight:700;font-family:'Space Mono',monospace;}
 
-@keyframes slideIn {
-  from { opacity:0; transform: translateX(-10px); }
-  to   { opacity:1; transform: translateX(0); }
-}
+/* AI REPORT PANEL */
+.report-panel{background:var(--surface);border:1px solid rgba(139,92,246,0.2);border-radius:14px;overflow:hidden;}
+.report-body{padding:16px 20px;}
+.report-text{font-size:13px;line-height:1.7;color:var(--text-dim);white-space:pre-wrap;}
+.report-text b,.report-text strong{color:var(--text);}
 
-.tx-item:hover { background: rgba(59,130,246,0.04); }
-.tx-item:last-child { border-bottom: none; }
+/* EXPLAIN MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid rgba(139,92,246,0.3);border-radius:16px;padding:28px;max-width:480px;width:90%;animation:modalIn 0.3s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+.modal-title{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;margin-bottom:4px;color:#a78bfa;}
+.modal-sub{font-size:12px;color:var(--text-dim);margin-bottom:16px;}
+.modal-content{font-size:14px;line-height:1.7;color:var(--text);}
+.modal-close{margin-top:18px;width:100%;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text-dim);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;}
+.modal-close:hover{color:var(--text);}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(167,139,250,0.3);border-top-color:#a78bfa;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-.tx-status-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.tx-status-dot.fraud { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
-.tx-status-dot.safe  { background: var(--success); box-shadow: 0 0 8px var(--success); }
-.tx-status-dot.warn  { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
-
-.tx-merchant {
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.tx-category {
-  font-size: 12px;
-  color: var(--text-dim);
-  font-family: 'Space Mono', monospace;
-}
-
-.tx-amount {
-  font-family: 'Space Mono', monospace;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.tx-badge {
-  font-size: 10px;
-  font-family: 'Space Mono', monospace;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-
-.tx-badge.fraud {
-  background: rgba(239,68,68,0.15);
-  color: var(--danger);
-  border: 1px solid rgba(239,68,68,0.3);
-}
-
-.tx-badge.safe {
-  background: rgba(16,185,129,0.15);
-  color: var(--success);
-  border: 1px solid rgba(16,185,129,0.3);
-}
-
-.tx-badge.warn {
-  background: rgba(245,158,11,0.15);
-  color: var(--warn);
-  border: 1px solid rgba(245,158,11,0.3);
-}
-
-.tx-empty {
-  padding: 40px 22px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 13px;
-  font-family: 'Space Mono', monospace;
-}
-
-/* CHART PANEL */
-.chart-wrap {
-  position: relative;
-  max-width: 200px;
-  margin: 0 auto 20px;
-}
-
-.chart-center {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.chart-center-value {
-  font-size: 24px;
-  font-weight: 700;
-  font-family: 'Space Mono', monospace;
-  color: var(--danger);
-}
-
-.chart-center-label {
-  font-size: 10px;
-  color: var(--text-dim);
-  font-family: 'Space Mono', monospace;
-}
-
-.metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.metric-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
-  text-align: center;
-}
-
-.metric-box-label {
-  font-size: 10px;
-  color: var(--text-dim);
-  font-family: 'Space Mono', monospace;
-  letter-spacing: 0.08em;
-  margin-bottom: 6px;
-}
-
-.metric-box-value {
-  font-size: 22px;
-  font-weight: 700;
-  font-family: 'Space Mono', monospace;
-}
-
-/* CHATBOT FLOAT */
-.chatbot-float {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  width: 58px;
-  height: 58px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  box-shadow: 0 8px 24px rgba(59,130,246,0.5);
-  text-decoration: none;
-  z-index: 1000;
-  transition: transform 0.2s, box-shadow 0.2s;
-  animation: floatIn 0.5s ease;
-}
-
-.chatbot-float:hover {
-  transform: scale(1.1) translateY(-2px);
-  box-shadow: 0 12px 32px rgba(59,130,246,0.6);
-}
-
-@keyframes floatIn {
-  from { opacity:0; transform: scale(0.5); }
-  to   { opacity:1; transform: scale(1); }
-}
-
-/* RISK INDICATOR */
-.risk-ring {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-family: 'Space Mono', monospace;
-}
-
-.legend-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  display: inline-block;
-}
+/* LEGEND */
+.legend-row{display:flex;gap:14px;font-size:11px;font-family:'Space Mono',monospace;color:var(--text-dim);}
+.leg-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px;}
 
 /* SCROLLBAR */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--text-muted);border-radius:3px;}
+
+/* CHATBOT FLOAT */
+.chatbot-float{position:fixed;bottom:24px;right:24px;width:54px;height:54px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 8px 24px rgba(59,130,246,0.5);text-decoration:none;z-index:999;transition:all 0.2s;}
+.chatbot-float:hover{transform:scale(1.1) translateY(-2px);}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header class="header">
-  <div class="header-logo">
+  <div class="logo">
     <div class="logo-icon">🧠</div>
     <div>
       <div class="logo-text">FRAUDSHIELD AI</div>
-      <div class="logo-sub">Threat Intelligence Platform</div>
+      <div class="logo-sub">Threat Intelligence</div>
     </div>
   </div>
-  <div class="header-status">
-    <div class="status-dot"></div>
-    SYSTEM ACTIVE
+  <div class="header-right">
+    <div class="status-pill"><div class="dot"></div> LIVE</div>
+    <div class="user-badge" id="userBadge">—</div>
+    <div class="clock" id="clock">--:--:--</div>
+    <a href="/logout" class="logout-btn">Logout</a>
   </div>
-  <div class="header-time" id="clock">--:--:--</div>
 </header>
 
 <div class="layout">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-label">Navigation</div>
-    <div class="nav-item active"><span class="nav-icon">📊</span> Dashboard</div>
-    <div class="nav-item"><span class="nav-icon">💳</span> Transactions</div>
-    <div class="nav-item"><span class="nav-icon">🔍</span> Analysis</div>
-    <div class="nav-item"><span class="nav-icon">⚙️</span> Settings</div>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-label">Navigation</div>
+  <div class="nav-item active"><span class="nav-icon">📊</span> Dashboard</div>
+  <a href="/history" class="nav-item"><span class="nav-icon">📁</span> History</a>
+  <a href="/chatbot" class="nav-item"><span class="nav-icon">💬</span> AI Assistant</a>
 
-    <div class="sidebar-label">Quick Stats</div>
-    <div class="nav-item"><span class="nav-icon">📁</span> Export CSV</div>
-    <a href="/chatbot" class="nav-item"><span class="nav-icon">💬</span> AI Assistant</a>
+  <div class="sidebar-label">Tools</div>
+  <div class="nav-item" onclick="generateReport()"><span class="nav-icon">🤖</span> AI Report</div>
+  <div class="nav-item" onclick="downloadCSV()"><span class="nav-icon">⬇</span> Export CSV</div>
 
-    <div class="threat-card" style="margin-top: auto;">
-      <div class="threat-label">◈ THREAT LEVEL</div>
-      <div class="threat-value" id="threatVal">0%</div>
-      <div class="threat-bar">
-        <div class="threat-fill" id="threatFill" style="width:0%"></div>
-      </div>
+  <div class="threat-card" style="margin-top:auto;">
+    <div class="threat-label">◈ THREAT LEVEL</div>
+    <div class="threat-value" id="threatVal">0%</div>
+    <div class="threat-bar"><div class="threat-fill" id="threatFill" style="width:0%"></div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">📋 Total Scanned</div>
+      <div class="stat-value" id="statTotal">0</div>
+      <div class="stat-sub">Transactions</div>
     </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- STAT CARDS -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">📋 Total Scanned</div>
-        <div class="stat-value" id="statTotal">0</div>
-        <div class="stat-delta">Transactions analyzed</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label" style="color:var(--danger)">🚨 Fraud Detected</div>
-        <div class="stat-value" id="statFraud" style="color:var(--danger)">0</div>
-        <div class="stat-delta up" id="fraudDelta">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label" style="color:var(--success)">✅ Safe Passed</div>
-        <div class="stat-value" id="statSafe" style="color:var(--success)">0</div>
-        <div class="stat-delta down" id="safeDelta">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label" style="color:var(--warn)">⚡ Avg Risk Score</div>
-        <div class="stat-value" id="statRisk" style="color:var(--warn)">0</div>
-        <div class="stat-delta">Out of 100</div>
-      </div>
+    <div class="stat-card">
+      <div class="stat-label" style="color:var(--danger)">🚨 Fraud Detected</div>
+      <div class="stat-value" id="statFraud" style="color:var(--danger)">0</div>
+      <div class="stat-sub" id="fraudAmt">₹0 blocked</div>
     </div>
+    <div class="stat-card">
+      <div class="stat-label" style="color:var(--success)">✅ Safe Passed</div>
+      <div class="stat-value" id="statSafe" style="color:var(--success)">0</div>
+      <div class="stat-sub" id="safeSub">Cleared</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" style="color:var(--warn)">⚡ Avg Risk</div>
+      <div class="stat-value" id="statRisk" style="color:var(--warn)">0</div>
+      <div class="stat-sub">Out of 100</div>
+    </div>
+  </div>
 
-    <!-- MAIN CONTENT GRID -->
-    <div class="content-grid">
+  <!-- CONTENT GRID -->
+  <div class="content-grid">
 
-      <!-- LEFT: ADD + HISTORY -->
-      <div style="display:flex; flex-direction:column; gap:20px;">
+    <!-- LEFT -->
+    <div style="display:flex;flex-direction:column;gap:18px;">
 
-        <!-- ADD TRANSACTION -->
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">💳 Add Transaction <span class="panel-badge">LIVE SCAN</span></div>
+      <!-- ADD TRANSACTION -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">💳 Add Transaction <span class="panel-badge">AI SCAN</span></div>
+        </div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="form-field">
+              <label>MERCHANT NAME</label>
+              <input id="merchant" placeholder="e.g. Amazon">
+            </div>
+            <div class="form-field">
+              <label>CATEGORY</label>
+              <input id="category" placeholder="e.g. Electronics">
+            </div>
+            <div class="form-field full">
+              <label>AMOUNT (₹)</label>
+              <input id="amount" type="number" placeholder="Enter amount">
+            </div>
           </div>
-          <div class="panel-body">
-            <div class="form-grid">
-              <div class="form-field">
-                <label>MERCHANT NAME</label>
-                <input id="merchant" placeholder="e.g. Amazon, Flipkart">
-              </div>
-              <div class="form-field">
-                <label>CATEGORY</label>
-                <input id="category" placeholder="e.g. Electronics, Food">
-              </div>
-              <div class="form-field full">
-                <label>AMOUNT (₹)</label>
-                <input id="amount" type="number" placeholder="Enter transaction amount">
-              </div>
-            </div>
-            <div class="btn-row">
-              <button class="btn btn-primary" onclick="addTransaction()">⚡ Analyze &amp; Add</button>
-              <button class="btn btn-secondary" onclick="clearFields()">✕ Clear</button>
-              <button class="btn btn-success" onclick="downloadCSV()" style="margin-left:auto">⬇ Export CSV</button>
-            </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="addTransaction()">⚡ Analyze & Add</button>
+            <button class="btn btn-secondary" onclick="clearFields()">✕ Clear</button>
+            <button class="btn btn-success" onclick="downloadCSV()" style="margin-left:auto">⬇ CSV</button>
           </div>
         </div>
-
-        <!-- HISTORY -->
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">📁 Transaction Log</div>
-            <div id="txCount" class="panel-badge">0 RECORDS</div>
-          </div>
-          <div class="tx-list" id="history">
-            <div class="tx-empty">No transactions yet. Add one above to begin scanning.</div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- RIGHT: CHART + METRICS -->
-      <div style="display:flex; flex-direction:column; gap:20px;">
-
-        <!-- CHART -->
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">📊 Fraud Distribution</div>
-            <div style="display:flex;gap:12px;font-size:11px;font-family:'Space Mono',monospace;color:var(--text-dim)">
-              <span><span class="legend-dot" style="background:var(--danger)"></span> Fraud</span>
-              <span><span class="legend-dot" style="background:var(--success)"></span> Safe</span>
-            </div>
-          </div>
-          <div class="panel-body">
-            <div class="chart-wrap">
-              <canvas id="fraudChart"></canvas>
-              <div class="chart-center">
-                <div class="chart-center-value" id="chartRate">0%</div>
-                <div class="chart-center-label">FRAUD RATE</div>
-              </div>
-            </div>
-            <div class="metrics-grid">
-              <div class="metric-box">
-                <div class="metric-box-label">FRAUD RATE</div>
-                <div class="metric-box-value" id="fraudRateBox" style="color:var(--danger)">0%</div>
-              </div>
-              <div class="metric-box">
-                <div class="metric-box-label">AVG RISK</div>
-                <div class="metric-box-value" id="riskScoreBox" style="color:var(--warn)">0</div>
-              </div>
-              <div class="metric-box">
-                <div class="metric-box-label">TOTAL ₹ SCANNED</div>
-                <div class="metric-box-value" id="totalAmountBox" style="color:var(--accent);font-size:16px">₹0</div>
-              </div>
-              <div class="metric-box">
-                <div class="metric-box-label">FRAUD ₹ BLOCKED</div>
-                <div class="metric-box-value" id="fraudAmountBox" style="color:var(--danger);font-size:16px">₹0</div>
-              </div>
-            </div>
-          </div>
+      <!-- TRANSACTION HISTORY -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">📁 Transaction Log</div>
+          <div id="txCount" class="panel-badge">0 RECORDS</div>
         </div>
-
-        <!-- RISK LEGEND -->
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">🛡️ Risk Classification</div>
-          </div>
-          <div class="panel-body" style="display:flex;flex-direction:column;gap:12px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;font-size:13px;">
-              <span>✅ <b>Safe</b> — Risk &lt; 40</span>
-              <span style="font-family:'Space Mono',monospace;color:var(--success)">₹ &lt; 50K</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:13px;">
-              <span>⚠️ <b>Suspicious</b> — Risk 40–79</span>
-              <span style="font-family:'Space Mono',monospace;color:var(--warn)">₹50K–1L</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;font-size:13px;">
-              <span>🚨 <b>Fraud</b> — Risk ≥ 80</span>
-              <span style="font-family:'Space Mono',monospace;color:var(--danger)">₹ &gt; 1L</span>
-            </div>
-          </div>
+        <div class="tx-list" id="history">
+          <div class="tx-empty">No transactions yet. Add one above.</div>
         </div>
-
       </div>
+
+      <!-- AI REPORT (GenAI Feature) -->
+      <div class="report-panel" id="reportPanel" style="display:none;">
+        <div class="panel-header" style="border-color:rgba(139,92,246,0.2);">
+          <div class="panel-title" style="color:#a78bfa;">🤖 AI Fraud Report <span class="panel-badge" style="color:#a78bfa;border-color:rgba(139,92,246,0.3);background:rgba(139,92,246,0.1);">GENERATIVE AI</span></div>
+          <button class="btn btn-secondary" onclick="document.getElementById('reportPanel').style.display='none'" style="font-size:11px;padding:4px 10px;">Close</button>
+        </div>
+        <div class="report-body">
+          <div class="report-text" id="reportText">Generating...</div>
+        </div>
+      </div>
+
     </div>
 
-  </main>
+    <!-- RIGHT -->
+    <div style="display:flex;flex-direction:column;gap:18px;">
+
+      <!-- CHART -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">📊 Fraud Distribution</div>
+          <div class="legend-row">
+            <span><span class="leg-dot" style="background:var(--danger)"></span>Fraud</span>
+            <span><span class="leg-dot" style="background:var(--warn)"></span>Suspicious</span>
+            <span><span class="leg-dot" style="background:var(--success)"></span>Safe</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-wrap">
+            <canvas id="fraudChart"></canvas>
+            <div class="chart-center">
+              <div class="chart-center-val" id="chartRate">0%</div>
+              <div class="chart-center-lbl">FRAUD RATE</div>
+            </div>
+          </div>
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <div class="metric-box-lbl">FRAUD RATE</div>
+              <div class="metric-box-val" id="fraudRateBox" style="color:var(--danger)">0%</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-box-lbl">AVG RISK</div>
+              <div class="metric-box-val" id="riskScoreBox" style="color:var(--warn)">0</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-box-lbl">TOTAL ₹</div>
+              <div class="metric-box-val" id="totalAmtBox" style="color:var(--accent);font-size:15px;">₹0</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-box-lbl">BLOCKED ₹</div>
+              <div class="metric-box-val" id="blockedAmtBox" style="color:var(--danger);font-size:15px;">₹0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RISK GUIDE -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🛡️ Risk Classification</div>
+        </div>
+        <div class="panel-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="padding:10px 12px;background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.2);border-radius:8px;font-size:12px;display:flex;justify-content:space-between;">
+            <span>✅ <b>Safe</b> — Risk &lt;40</span><span style="font-family:'Space Mono',monospace;color:var(--success);font-size:11px;">₹&lt;50K</span>
+          </div>
+          <div style="padding:10px 12px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:12px;display:flex;justify-content:space-between;">
+            <span>⚠️ <b>Suspicious</b> — Risk 40–79</span><span style="font-family:'Space Mono',monospace;color:var(--warn);font-size:11px;">₹50K–1L</span>
+          </div>
+          <div style="padding:10px 12px;background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.2);border-radius:8px;font-size:12px;display:flex;justify-content:space-between;">
+            <span>🚨 <b>Fraud</b> — Risk ≥80</span><span style="font-family:'Space Mono',monospace;color:var(--danger);font-size:11px;">₹&gt;1L</span>
+          </div>
+          <button class="btn btn-ai" style="margin-top:4px;width:100%;justify-content:center;" onclick="generateReport()">
+            🤖 Generate AI Report
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
 </div>
 
-<!-- CHATBOT FLOAT -->
+<!-- EXPLAIN MODAL -->
+<div class="modal-overlay" id="explainModal">
+  <div class="modal">
+    <div class="modal-title">🤖 AI Explanation</div>
+    <div class="modal-sub" id="explainSub">Why was this transaction flagged?</div>
+    <div class="modal-content" id="explainContent"><span class="spinner"></span> Analyzing with AI...</div>
+    <button class="modal-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<!-- CHATBOT -->
 <a href="/chatbot" class="chatbot-float" title="AI Assistant">💬</a>
 
 <script>
 let transactions = [];
 let fraudChart;
 
-// Clock
+// Clock + user badge
 function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent = now.toLocaleTimeString('en-IN', { hour12: false });
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-IN',{hour12:false});
 }
-setInterval(updateClock, 1000);
-updateClock();
+setInterval(updateClock, 1000); updateClock();
 
-const merchantInput = document.getElementById("merchant");
-const categoryInput = document.getElementById("category");
-const amountInput   = document.getElementById("amount");
+// Load existing transactions from server
+async function loadTransactions() {
+  try {
+    const r = await fetch('/get_transactions');
+    const data = await r.json();
+    transactions = data;
+    renderHistory(); updateAnalytics(); renderChart();
+  } catch(e) {}
+}
+loadTransactions();
 
-function addTransaction() {
-  const merchant = merchantInput.value.trim();
-  const category = categoryInput.value.trim();
-  const amount   = Number(amountInput.value);
+// Fetch user email for badge
+fetch('/get_transactions').then(r=>r.headers).catch(()=>{});
+// Simple: show from page title
+document.getElementById('userBadge').textContent = document.cookie.match(/user=([^;]+)/)?.[1] || '👤 User';
 
-  if (!merchant || !category || !amount) {
-    alert("Please fill all fields.");
-    return;
+async function addTransaction() {
+  const merchant = document.getElementById('merchant').value.trim();
+  const category = document.getElementById('category').value.trim();
+  const amount   = Number(document.getElementById('amount').value);
+  if (!merchant || !category || !amount) { alert('Please fill all fields.'); return; }
+
+  try {
+    const r = await fetch('/add_transaction', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({merchant, category, amount})
+    });
+    const data = await r.json();
+    transactions.unshift({merchant, category, amount, status:data.status, risk:data.risk,
+      timestamp: new Date().toLocaleString('en-IN')});
+    renderHistory(); updateAnalytics(); renderChart(); clearFields();
+  } catch(e) {
+    // fallback client-side
+    let status = amount>100000?'fraud':amount>50000?'warn':'safe';
+    let risk   = amount>100000?90:amount>50000?60:20;
+    transactions.unshift({merchant,category,amount,status,risk,timestamp:new Date().toLocaleString('en-IN')});
+    renderHistory(); updateAnalytics(); renderChart(); clearFields();
   }
-
-  let status, risk;
-  if (amount > 100000) { status = "fraud"; risk = Math.min(95, 80 + Math.floor(Math.random() * 15)); }
-  else if (amount > 50000) { status = "warn"; risk = 50 + Math.floor(Math.random() * 25); }
-  else { status = "safe"; risk = 10 + Math.floor(Math.random() * 25); }
-
-  transactions.unshift({ merchant, category, amount, status, risk });
-  renderHistory();
-  updateAnalytics();
-  renderChart();
-  clearFields();
 }
 
 function renderHistory() {
-  const history = document.getElementById("history");
-  document.getElementById("txCount").textContent = `${transactions.length} RECORDS`;
-
+  const history = document.getElementById('history');
+  document.getElementById('txCount').textContent = transactions.length + ' RECORDS';
   if (!transactions.length) {
-    history.innerHTML = `<div class="tx-empty">No transactions yet.</div>`;
-    return;
+    history.innerHTML = '<div class="tx-empty">No transactions yet. Add one above.</div>'; return;
   }
-
-  history.innerHTML = transactions.map(t => `
-    <div class="tx-item">
-      <div class="tx-status-dot ${t.status}"></div>
+  history.innerHTML = transactions.map((t,i) => `
+    <div class="tx-item" onclick="explainTx(${i})" title="Click for AI explanation">
+      <div class="tx-dot ${t.status}"></div>
       <div>
         <div class="tx-merchant">${t.merchant}</div>
-        <div class="tx-category">${t.category}</div>
+        <div class="tx-meta">${t.category} · ${t.timestamp || ''}</div>
       </div>
-      <div class="tx-amount">₹${t.amount.toLocaleString('en-IN')}</div>
-      <div class="tx-badge ${t.status}">${t.status === 'warn' ? 'SUSPICIOUS' : t.status.toUpperCase()}</div>
-    </div>
-  `).join('');
+      <div class="tx-amount">₹${Number(t.amount).toLocaleString('en-IN')}</div>
+      <div class="tx-badge ${t.status}">${t.status==='warn'?'SUSPICIOUS':t.status.toUpperCase()}</div>
+    </div>`).join('');
 }
 
 function updateAnalytics() {
-  const total  = transactions.length;
-  const frauds = transactions.filter(t => t.status === "fraud").length;
-  const safes  = transactions.filter(t => t.status === "safe").length;
-  const avgRisk = transactions.reduce((s, t) => s + t.risk, 0) / (total || 1);
-  const rate   = total ? ((frauds / total) * 100).toFixed(1) : 0;
-  const totalAmt = transactions.reduce((s, t) => s + t.amount, 0);
-  const fraudAmt = transactions.filter(t => t.status === 'fraud').reduce((s, t) => s + t.amount, 0);
+  const total   = transactions.length;
+  const frauds  = transactions.filter(t=>t.status==='fraud');
+  const safes   = transactions.filter(t=>t.status==='safe');
+  const avgRisk = total ? transactions.reduce((s,t)=>s+t.risk,0)/total : 0;
+  const rate    = total ? (frauds.length/total*100).toFixed(1) : 0;
+  const totalAmt  = transactions.reduce((s,t)=>s+Number(t.amount),0);
+  const fraudAmt  = frauds.reduce((s,t)=>s+Number(t.amount),0);
 
-  document.getElementById("statTotal").textContent   = total;
-  document.getElementById("statFraud").textContent   = frauds;
-  document.getElementById("statSafe").textContent    = safes;
-  document.getElementById("statRisk").textContent    = avgRisk.toFixed(0);
-  document.getElementById("fraudRate").textContent   = rate + "%";
-  document.getElementById("fraudRateBox").textContent = rate + "%";
-  document.getElementById("riskScoreBox").textContent = avgRisk.toFixed(0);
-  document.getElementById("chartRate").textContent   = rate + "%";
-  document.getElementById("totalAmountBox").textContent = "₹" + totalAmt.toLocaleString('en-IN');
-  document.getElementById("fraudAmountBox").textContent = "₹" + fraudAmt.toLocaleString('en-IN');
-  document.getElementById("threatVal").textContent   = rate + "%";
-  document.getElementById("threatFill").style.width  = rate + "%";
-
-  // fraud delta
-  document.getElementById("fraudDelta").textContent = frauds > 0 ? `↑ ${frauds} flagged` : "None flagged";
-  document.getElementById("safeDelta").textContent  = safes > 0 ? `↓ ${safes} cleared` : "None cleared";
+  document.getElementById('statTotal').textContent  = total;
+  document.getElementById('statFraud').textContent  = frauds.length;
+  document.getElementById('fraudAmt').textContent   = '₹'+fraudAmt.toLocaleString('en-IN')+' blocked';
+  document.getElementById('statSafe').textContent   = safes.length;
+  document.getElementById('statRisk').textContent   = avgRisk.toFixed(0);
+  document.getElementById('fraudRateBox').textContent = rate+'%';
+  document.getElementById('riskScoreBox').textContent = avgRisk.toFixed(0);
+  document.getElementById('chartRate').textContent  = rate+'%';
+  document.getElementById('totalAmtBox').textContent = '₹'+totalAmt.toLocaleString('en-IN');
+  document.getElementById('blockedAmtBox').textContent = '₹'+fraudAmt.toLocaleString('en-IN');
+  document.getElementById('threatVal').textContent  = rate+'%';
+  document.getElementById('threatFill').style.width = Math.min(rate,100)+'%';
 }
 
 function renderChart() {
-  const frauds = transactions.filter(t => t.status === "fraud").length;
-  const warns  = transactions.filter(t => t.status === "warn").length;
-  const safe   = transactions.filter(t => t.status === "safe").length;
-
+  const f = transactions.filter(t=>t.status==='fraud').length;
+  const w = transactions.filter(t=>t.status==='warn').length;
+  const s = transactions.filter(t=>t.status==='safe').length;
   if (fraudChart) fraudChart.destroy();
-
-  fraudChart = new Chart(document.getElementById("fraudChart"), {
-    type: "doughnut",
-    data: {
-      labels: ["Fraud", "Suspicious", "Safe"],
-      datasets: [{
-        data: [frauds, warns, safe],
-        backgroundColor: ["rgba(239,68,68,0.85)", "rgba(245,158,11,0.85)", "rgba(16,185,129,0.85)"],
-        borderColor: ["#ef4444", "#f59e0b", "#10b981"],
-        borderWidth: 2,
-        hoverOffset: 8
-      }]
-    },
-    options: {
-      cutout: "70%",
-      plugins: { legend: { display: false } },
-      animation: { duration: 600 }
-    }
+  fraudChart = new Chart(document.getElementById('fraudChart'),{
+    type:'doughnut',
+    data:{labels:['Fraud','Suspicious','Safe'],datasets:[{
+      data:[f,w,s],
+      backgroundColor:['rgba(239,68,68,0.85)','rgba(245,158,11,0.85)','rgba(16,185,129,0.85)'],
+      borderColor:['#ef4444','#f59e0b','#10b981'],borderWidth:2,hoverOffset:6
+    }]},
+    options:{cutout:'70%',plugins:{legend:{display:false}},animation:{duration:500}}
   });
 }
 
 function clearFields() {
-  merchantInput.value = "";
-  categoryInput.value = "";
-  amountInput.value   = "";
+  ['merchant','category','amount'].forEach(id=>document.getElementById(id).value='');
 }
 
 function downloadCSV() {
-  if (!transactions.length) { alert("No transactions to export."); return; }
-  let csv = "Merchant,Category,Amount,Status,Risk Score\n";
-  transactions.forEach(t => {
-    csv += `${t.merchant},${t.category},${t.amount},${t.status},${t.risk}\n`;
-  });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-  a.download = "fraud_report.csv";
-  a.click();
+  if (!transactions.length){alert('No transactions to export.');return;}
+  let csv = 'Merchant,Category,Amount,Status,Risk Score,Timestamp\n';
+  transactions.forEach(t=>{csv+=`${t.merchant},${t.category},${t.amount},${t.status},${t.risk},${t.timestamp||''}\n`;});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='fraud_report.csv'; a.click();
 }
 
-// Initial chart render
+// GenAI Feature 1: Generate AI Report
+async function generateReport() {
+  const panel = document.getElementById('reportPanel');
+  const text  = document.getElementById('reportText');
+  panel.style.display = 'block';
+  text.innerHTML = '<span class="spinner"></span> Generating AI analysis...';
+  panel.scrollIntoView({behavior:'smooth'});
+  try {
+    const r = await fetch('/generate_report',{method:'POST',headers:{'Content-Type':'application/json'}});
+    const data = await r.json();
+    text.textContent = data.report;
+  } catch(e) {
+    text.textContent = '⚠️ Could not generate report. Please try again.';
+  }
+}
+
+// GenAI Feature 2: Explain Transaction
+async function explainTx(index) {
+  const tx = transactions[index];
+  if (!tx) return;
+  const modal   = document.getElementById('explainModal');
+  const content = document.getElementById('explainContent');
+  const sub     = document.getElementById('explainSub');
+  sub.textContent = `${tx.merchant} · ₹${Number(tx.amount).toLocaleString('en-IN')} · ${tx.status.toUpperCase()}`;
+  content.innerHTML = '<span class="spinner"></span> Analyzing with AI...';
+  modal.classList.add('open');
+  try {
+    const r = await fetch('/explain_transaction',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({merchant:tx.merchant,category:tx.category,amount:tx.amount,status:tx.status,risk:tx.risk})
+    });
+    const data = await r.json();
+    content.textContent = data.explanation;
+  } catch(e) {
+    content.textContent = '⚠️ Could not fetch explanation.';
+  }
+}
+
+function closeModal() {
+  document.getElementById('explainModal').classList.remove('open');
+}
+
+document.getElementById('explainModal').addEventListener('click',function(e){
+  if(e.target===this) closeModal();
+});
+
 renderChart();
 </script>
 </body>
