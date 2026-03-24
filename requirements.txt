@@ -3,4 +3,14 @@ pandas
 numpy
 scikit-learn
 joblib
+flask-sqlalchemy
+sqlalchemy
+werkzeug
 gunicorn
+ 
+
+
+
+
+
+
