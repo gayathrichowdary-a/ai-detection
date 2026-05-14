@@ -55,7 +55,7 @@ AI-powered fraud detection web application using Machine Learning and Flask
 
 ---
 
-## Chatbot Page
+## Chatbot Assistant
 
 ![Chatbot](chatbot.png)
 
