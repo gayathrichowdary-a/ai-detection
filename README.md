@@ -27,6 +27,8 @@ AI-powered fraud detection web application using Machine Learning and Flask
 - Scikit-learn
 
 ---
+# 🌐 Live Demo
+https://ai-detection-2-k1tl.onrender.com
 
 # 📸 Project Screenshots
 
