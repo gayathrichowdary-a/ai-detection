@@ -76,7 +76,7 @@ python app.py
 
 | Name |
 |------|
-| Gayathri Chowdary | 
-| Siri Chandana | 
-| Dinesh Karthik | 
-| Madhu |
+| A Gayathri  | 
+| V Siri Chandana | 
+| A Dinesh Karthik | 
+| K Madhu |
