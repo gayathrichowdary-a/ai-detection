@@ -72,6 +72,11 @@ python app.py
 
 ---
 
-# 👩‍💻 Author
+# 👨‍💻 Project Team
 
-Gayathri Chowdary
+| Name |
+|------|
+| Gayathri Chowdary | 
+| Siri Chandana | 
+| Dinesh Karthik | 
+| Madhu |
