@@ -32,21 +32,16 @@ AI-powered fraud detection web application using Machine Learning and Flask
 
 ## 🏠 Home Page
 
-![Home Page](home.png)
+![Home Page](Home.png)
 
 ---
 
 ## 📊 Dashboard
 
-![Dashboard](dashboard.png)
+![Dashboard](Dashboard.png)
 
 ---
 
-## 🔐 Login Page
-
-![Login](login.png)
-
----
 
 ##  Upload Page
 
