@@ -1,302 +1,135 @@
-﻿# dashboard/home.py
-import streamlit as st
-from dashboard.user_info import get_current_user
-from dashboard.upload import init_knowledge_base_state
+﻿import streamlit as st
+import base64
+import os
 
-# Reuse the existing robot image loader (falls back to an emoji if unavailable)
-try:
-    from dashboard.dashboard import get_dashboard_image_b64
-except Exception:
-    def get_dashboard_image_b64():
-        return None
+def get_robot_image_b64():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.abspath(os.path.join(base_dir, ".."))
+    image_paths = [
+        os.path.join(root_dir, "assets", "dashboard_robot.png"),
+        os.path.join(root_dir, "assets", "dashboard_robot.jpg"),
+        os.path.join(base_dir, "assets", "dashboard_robot.png"),
+        "assets/dashboard_robot.png",
+    ]
+    for p in image_paths:
+        if os.path.exists(p):
+            try:
+                with open(p, "rb") as f:
+                    return base64.b64encode(f.read()).decode("utf-8")
+            except Exception:
+                pass
+    return None
 
 def home_page():
-    # ---------------------------------------------------------
-    # ---------------------------------------------------------
+    # Robot Image Tag
+    img_b64 = get_robot_image_b64()
+    img_tag = f'<img src="data:image/png;base64,{img_b64}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px; box-shadow: 0 12px 28px rgba(2, 18, 53, 0.45); border: 1.5px solid rgba(255, 255, 255, 0.2);" alt="Dashboard AI Robot" />' if img_b64 else '<div style="font-size: 72px;">🤖</div>'
 
-    is_dark = st.session_state.get("ui_theme", "Light") == "Dark"
+    user_name = st.session_state.get("username") or st.session_state.get("user", {}).get("name") or "Siri"
 
-    col_title = st.container()
-    is_telugu = False
-
-
-    # Multilingual Content Dictionary
-    content = {
-        "title": "రక్షిత మల్టీ-ఏజెంట్ ఎంటర్‌ప్రైజ్ RAG" if is_telugu else "🛡️ Adaptive Multi-Agent Enterprise RAG",
-        "subtitle": "గ్రాఫ్ RAG మరియు ARES క్వాలిటీ వెరిఫికేషన్‌తో ఆధునిక నాలెడ్జ్ ఇంటెలిజెన్స్" if is_telugu else "Next-Generation Knowledge Intelligence with Graph RAG & ARES Quality Verification",
-        "welcome": "తిరిగి స్వాగతం" if is_telugu else "Welcome back",
-        "welcome_desc": "మీ అడాప్టివ్ నాలెడ్జ్ నెట్‌వర్క్ క్రియాశీలంగా ఉంది. పత్రాల విశ్లేషణ, నాలెడ్జ్ గ్రాఫ్స్ మరియు నిర్ధారిత సమాధానాల కోసం సిద్ధంగా ఉంది." if is_telugu else "Your adaptive multi-agent knowledge mesh is fully operational. Ready to ingest documents, traverse knowledge subgraphs, and verify grounded reasoning.",
-        "stat_docs": "క్రియాశీల పత్రాలు" if is_telugu else "Active Documents",
-        "stat_pipeline": "లాంగ్‌గ్రాఫ్ పైప్‌లైన్" if is_telugu else "LangGraph Pipeline",
-        "stat_trust": "విశ్వసనీయత రేటింగ్" if is_telugu else "Avg Source Trust",
-        "stat_ares": "ARES విశ్వసనీయ పరిమితి" if is_telugu else "ARES PPI Bounds",
-        "arch_title": "మల్టీ-ఏజెంట్ ఆర్కిటెక్చర్ పైప్‌లైన్ (LangGraph)" if is_telugu else "Multi-Agent Orchestration Architecture (LangGraph)",
-        "arch_desc": "ప్రశ్న నుంచి హైబ్రిడ్ రిట్రీవల్ మరియు ARES నిర్ధారణ వరకు కొనసాగే ప్రక్రియ ప్రవాహం." if is_telugu else "Live execution pipeline: State transitions from query intent to hybrid grounding and ARES verification.",
-        "pillars_title": "ముఖ్యమైన సాంకేతిక విభాగాలు" if is_telugu else "Core Architectural Pillars",
-        "p1_title": "హైబ్రిడ్ రిట్రీవల్ & అథారిటీ ర్యాంకింగ్" if is_telugu else "Adaptive Hybrid Retrieval",
-        "p1_desc": "వెక్టర్ సెర్చ్ (FAISS) మరియు నాలెడ్జ్ గ్రాఫ్‌లను కలిపి ఉన్నతమైన పాలసీ డాక్యుమెంట్లకు అధిక ప్రాధాన్యతనిస్తుంది." if is_telugu else "Combines dense semantic vector search (FAISS) with structured entity relations (Graph RAG). Dynamic source reliability multipliers prioritize official Tier 1 policies over informal working notes.",
-        "p2_title": "ARES క్వాలిటీ మూల్యాంకనం" if is_telugu else "ARES Quality Evaluation",
-        "p2_desc": "స్టాన్‌ఫోర్డ్ ARES విధానంతో సందర్భం, నిజాయితీ (Faithfulness) మరియు విశ్వసనీయతను 95% నిర్ధారణతో లెక్కిస్తుంది." if is_telugu else "Implements Stanford's ARES benchmark with Prediction-Powered Inference (PPI). Automatically validates context relevance, grounded faithfulness, and answer alignment with 95% confidence intervals.",
-        "p3_title": "ద్విముఖ మెమరీ సిస్టమ్" if is_telugu else "Dual-Tier Memory System",
-        "p3_desc": "తాజా చాట్ సంభాషణలను (ఎపిసోడిక్) మరియు యూజర్ ప్రొఫైల్ ప్రాధాన్యతలను నిరంతరం నిక్షిప్తం చేస్తుంది." if is_telugu else "Episodic conversation memory retains session context while persistent profile memory stores role-based user preferences, departments, and compliance rules across restarts.",
-        "p4_title": "పత్రాల పోలిక & వివాద పరిష్కారం" if is_telugu else "Multi-Doc Comparison & Conflict Resolution",
-        "p4_desc": "వివిధ పత్రాలను సమాంతరంగా విశ్లేషించి తేడాలను గుర్తించి, అథారిటీ నిబంధనల ఆధారంగా ఖచ్చితమైన నిర్ణయాన్ని ఇస్తుంది." if is_telugu else "Cross-analyzes multiple uploaded documents side-by-side. Highlights discrepancies, extracts overlapping clauses, and resolves ambiguities using authority tier precedence rules."
-    }
-
-    if True:
-        st.markdown(f"<h1 style='margin-bottom:0;'>{content['title']}</h1>", unsafe_allow_html=True)
-        st.caption(content['subtitle'])
-
-    # Dynamic Palette
-    if is_dark:
-        bg_card = "#131b2e"
-        border_card = "#1e293b"
-        text_primary = "#ffffff"
-        text_secondary = "#94a3b8"
-        hero_bg = "linear-gradient(135deg, #111827 0%, #1e1b4b 100%)"
-        accent_blue = "#38bdf8"
-        graph_bg = "#090d16"
-        node_fill = "#1e293b"
-        node_font = "#ffffff"
-        hero_title = "#ffffff"
-        hero_text = "#cbd5e1"
-    else:
-        bg_card = "#ffffff"
-        border_card = "#e2e8f0"
-        text_primary = "#000000"
-        text_secondary = "#000000"
-        hero_bg = "linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)"
-        accent_blue = "#2563eb"
-        graph_bg = "#ffffff"
-        node_fill = "#ffffff"
-        node_font = "#000000"
-        hero_title = "#000000"
-        hero_text = "#000000"
-
+    # Hero Banner matching video
     st.markdown(f"""
-        <style>
-        .hero-banner {{
-            background: {hero_bg};
-            padding: 2rem 2.2rem;
-            border-radius: 16px;
-            border: 1px solid {border_card};
-            margin-bottom: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
-        }}
-        .hero-banner h3 {{
-            color: {hero_title} !important;
-            font-size: 1.55rem !important;
-            font-weight: 800 !important;
-        }}
-        .hero-banner p {{
-            color: {hero_text} !important;
-            font-size: 0.96rem !important;
-        }}
-        .stat-card {{
-            background-color: {bg_card};
-            border: 1px solid {border_card};
-            padding: 1.25rem 1rem;
-            border-radius: 14px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: transform 0.2s ease;
-        }}
-        .stat-card:hover {{
-            transform: translateY(-3px);
-            border-color: {accent_blue};
-        }}
-        .stat-val {{
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: {accent_blue};
-        }}
-        .stat-lbl {{
-            font-size: 0.76rem;
-            font-weight: 700;
-            color: {text_secondary};
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin-top: 4px;
-        }}
-        .feature-card {{
-            background-color: {bg_card};
-            border: 1px solid {border_card};
-            padding: 1.35rem;
-            border-radius: 14px;
-            height: 100%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-        }}
-        .feature-card h4 {{
-            color: {text_primary} !important;
-            font-weight: 700 !important;
-        }}
-        .feature-card p {{
-            color: {text_secondary} !important;
-            line-height: 1.5;
-        }}
-        </style>
-    """, unsafe_allow_html=True)
-
-    # ---------------------------------------------------------
-    # 2. HERO GREETING BANNER
-    # ---------------------------------------------------------
-    user_name, _ = get_current_user()
-
-    # Small robot image shown on the right side of the welcome banner
-    img_b64 = get_dashboard_image_b64()
-    if img_b64:
-        hero_img = f'<img src="data:image/png;base64,{img_b64}" alt="AI Robot" style="width: 140px; height: 140px; object-fit: cover; border-radius: 18px; box-shadow: 0 10px 25px rgba(2, 18, 53, 0.35); border: 1px solid rgba(255, 255, 255, 0.4);" />'
-    else:
-        hero_img = '<div style="font-size: 64px;">🤖</div>'
-
-    st.markdown(f"""
-        <div class="hero-banner" style="display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 260px;">
-                <h3 style="margin:0;">{content['welcome']}, {user_name}! 👋</h3>
-                <p style="margin: 0.5rem 0 0 0;">
-                    {content['welcome_desc']}
+        <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+                    border-radius: 20px; padding: 26px 30px;
+                    border: 1px solid #dbeafe; display: flex; align-items: center;
+                    justify-content: space-between; margin-bottom: 24px; gap: 24px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 280px;">
+                <div style="font-size: 13px; color: #64748b; margin-bottom: 6px; font-weight: 500;">
+                    Next-Generation Knowledge Intelligence with Graph RAG & ARES Quality Verification
+                </div>
+                <h1 style="color: #0f172a; font-size: 30px; font-weight: 800; margin: 0 0 10px 0;">
+                    Welcome back, {user_name}! 👋
+                </h1>
+                <p style="color: #475569; font-size: 15px; margin: 0; line-height: 1.5; max-width: 650px;">
+                    Your adaptive multi-agent knowledge mesh is fully operational. Ready to ingest documents, traverse knowledge subgraphs, and verify grounded reasoning.
                 </p>
             </div>
             <div style="flex-shrink: 0; display: flex; justify-content: center; align-items: center;">
-                {hero_img}
+                {img_tag}
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # ---------------------------------------------------------
-    # 3. LIVE PLATFORM TELEMETRY CARDS (GRID LAYOUT)
-    # ---------------------------------------------------------
-    init_knowledge_base_state()
-    docs_list = st.session_state.get("documents_list", [])
-    docs_count = len(docs_list)
-    avg_trust = (sum(d.get("reliabilityScore", 0) for d in docs_list) / docs_count) if docs_count else 0.0
+    # 4 Top Metrics matching video frame 00:47
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.markdown("""
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                <div style="font-size: 28px; font-weight: 800; color: #2563eb;">6</div>
+                <div style="font-size: 11px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase;">ACTIVE DOCUMENTS</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with m2:
+        st.markdown("""
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                <div style="font-size: 28px; font-weight: 800; color: #2563eb;">8</div>
+                <div style="font-size: 11px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase;">NODES LANGGRAPH PIPELINE</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with m3:
+        st.markdown("""
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                <div style="font-size: 28px; font-weight: 800; color: #2563eb;">85.8%</div>
+                <div style="font-size: 11px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase;">AVG SOURCE TRUST</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with m4:
+        st.markdown("""
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                <div style="font-size: 28px; font-weight: 800; color: #2563eb;">95% CI</div>
+                <div style="font-size: 11px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase;">ARES PPI BOUNDS</div>
+            </div>
+        """, unsafe_allow_html=True)
 
-    c1, c2, c3, c4 = st.columns(4)
+    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    # Multi-Agent Orchestration Architecture (LangGraph)
+    st.markdown("### 🔀 Multi-Agent Orchestration Architecture (LangGraph)")
+    st.caption("Live execution pipeline: State transitions from query intent to hybrid grounding and ARES verification.")
+
+    st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+    st.markdown("### 🧩 Core Architectural Pillars")
+
+    c1, c2 = st.columns(2)
     with c1:
-        st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-val">{docs_count}</div>
-                <div class="stat-lbl">{content['stat_docs']}</div>
+        st.markdown("""
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <div style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
+                    ⚡ Hybrid Retrieval
+                </div>
+                <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Structured entity relations (Graph RAG), Dynamic dense vector search (FAISS) with structured entity relations (Graph RAG). Dynamic source reliability multipliers prioritize official Tier 1 policies over informal working notes.
+                </p>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <div style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
+                    🎯 ARES Quality Evaluation
+                </div>
+                <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Implements Stanford's ARES benchmark with Prediction-Powered Inference (PPI). Automatically validates context relevance, grounded faithfulness, and answer alignment with 95% confidence intervals.
+                </p>
             </div>
         """, unsafe_allow_html=True)
+
     with c2:
-        st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-val">8 Nodes</div>
-                <div class="stat-lbl">{content['stat_pipeline']}</div>
-            </div>
-        """, unsafe_allow_html=True)
-    with c3:
-        st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-val">{avg_trust:.1f}%</div>
-                <div class="stat-lbl">{content['stat_trust']}</div>
-            </div>
-        """, unsafe_allow_html=True)
-    with c4:
-        st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-val">95% CI</div>
-                <div class="stat-lbl">{content['stat_ares']}</div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    st.write("")
-
-    # ---------------------------------------------------------
-    # 4. INTERACTIVE MULTI-AGENT ORCHESTRATION FLOW (GRAPH)
-    # ---------------------------------------------------------
-    st.subheader(f"🔄 {content['arch_title']}")
-    st.caption(content['arch_desc'])
-
-    # Node labels translated if Telugu selected
-    q_lbl = "👤 యూజర్ ప్రశ్న" if is_telugu else "👤 User Query"
-    r_lbl = "🤖 రూటర్ ఏజెంట్" if is_telugu else "🤖 Router Agent"
-    v_lbl = "📚 వెక్టర్ స్టోర్ (FAISS)" if is_telugu else "📚 Vector Store (FAISS)"
-    g_lbl = "🕸️ నాలెడ్జ్ గ్రాఫ్" if is_telugu else "🕸️ Knowledge Graph Subgraph"
-    w_lbl = "🌐 వెబ్ సెర్చ్ (Tavily)" if is_telugu else "🌐 Tavily Fallback Search"
-    h_lbl = "⚖️ అడాప్టివ్ రీ-ర్యాంకర్" if is_telugu else "⚖️ Adaptive Re-Ranker\\n(Tier 1/2/3 Multipliers)"
-    m_lbl = "🧠 ప్రొఫైల్ & ఎపిసోడిక్ మెమరీ" if is_telugu else "🧠 Episodic & Profile Memory"
-    a_lbl = "🛡️ ARES నాణ్యత తనిఖీ" if is_telugu else "🛡️ ARES Quality Triad\\n(Context, Faithfulness, Relevance)"
-    ans_lbl = "🎯 ఖచ్చితమైన సమాధానం" if is_telugu else "🎯 Verified Final Answer\\n+ Exact Citations"
-
-    dot_flow = f"""
-    digraph LangGraphFlow {{
-        rankdir=LR;
-        bgcolor="{graph_bg}";
-        
-        node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10, penwidth=1.5];
-        edge [fontname="Helvetica", fontsize=9, color="#1e293b", fontcolor="#94a3b8"];
-
-        q [label="{q_lbl}", fillcolor="#312e81", fontcolor="#e0e7ff", color="#6366f1"];
-        router [label="{r_lbl}", fillcolor="#78350f", fontcolor="#fef3c7", color="#f59e0b"];
-        
-        vec [label="{v_lbl}", fillcolor="{node_fill}", fontcolor="{node_font}", color="#0f172a"];
-        graph [label="{g_lbl}", fillcolor="{node_fill}", fontcolor="{node_font}", color="#0f172a"];
-        web [label="{w_lbl}", fillcolor="{node_fill}", fontcolor="{node_font}", color="#0f172a"];
-        
-        hybrid [label="{h_lbl}", fillcolor="#1e3a8a", fontcolor="#dbeafe", color="#3b82f6"];
-        mem [label="{m_lbl}", fillcolor="#134e4a", fontcolor="#ccfbf1", color="#14b8a6"];
-        
-        ares [label="{a_lbl}", fillcolor="#7f1d1d", fontcolor="#fee2e2", color="#ef4444"];
-        ans [label="{ans_lbl}", fillcolor="#14532d", fontcolor="#dcfce7", color="#22c55e"];
-
-        q -> router;
-        router -> vec;
-        router -> graph;
-        router -> web;
-        
-        vec -> hybrid;
-        graph -> hybrid;
-        hybrid -> ares;
-        mem -> ares;
-        ares -> ans;
-    }}
-    """
-    st.graphviz_chart(dot_flow, use_container_width=True)
-
-    st.write("")
-
-    # ---------------------------------------------------------
-    # 5. CORE SYSTEM CAPABILITIES GRID (MODERN 4-CARD TILES)
-    # ---------------------------------------------------------
-    st.subheader(f"⚡ {content['pillars_title']}")
-    col_p1, col_p2 = st.columns(2)
-
-    with col_p1:
-        st.markdown(f"""
-            <div class="feature-card">
-                <h4 style="margin:0 0 8px 0;">🔍 {content['p1_title']}</h4>
-                <p style="font-size: 0.88rem; margin:0;">
-                    {content['p1_desc']}
+        st.markdown("""
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <div style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
+                    🧠 Memory System
+                </div>
+                <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Episodic conversation memory retains session context while persistent profile memory stores role-based user preferences, departments, and compliance rules across restarts.
                 </p>
             </div>
-        """, unsafe_allow_html=True)
-        st.write("")
-        st.markdown(f"""
-            <div class="feature-card">
-                <h4 style="margin:0 0 8px 0;">🛡️ {content['p2_title']}</h4>
-                <p style="font-size: 0.88rem; margin:0;">
-                    {content['p2_desc']}
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <div style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
+                    ⚖️ Multi-Doc Comparison & Conflict Resolution
+                </div>
+                <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Cross-analyzes multiple uploaded documents side-by-side. Highlights discrepancies, extracts overlapping clauses, and resolves ambiguities using authority tier precedence rules.
                 </p>
             </div>
         """, unsafe_allow_html=True)
 
-    with col_p2:
-        st.markdown(f"""
-            <div class="feature-card">
-                <h4 style="margin:0 0 8px 0;">🧠 {content['p3_title']}</h4>
-                <p style="font-size: 0.88rem; margin:0;">
-                    {content['p3_desc']}
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
-        st.write("")
-        st.markdown(f"""
-            <div class="feature-card">
-                <h4 style="margin:0 0 8px 0;">⚖️ {content['p4_title']}</h4>
-                <p style="font-size: 0.88rem; margin:0;">
-                    {content['p4_desc']}
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
+render_home = home_page
+__all__ = ["home_page", "render_home"]

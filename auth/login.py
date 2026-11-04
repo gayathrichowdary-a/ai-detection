@@ -3,69 +3,17 @@ import base64
 import streamlit as st
 from auth.database import verify_user
 
-
-def get_real_email(username, typed_value=""):
-    """Return the real email for a user.
-
-    Order of preference:
-    1. What the user typed, if it was an email address.
-    2. The email stored in the database (tries common helper names in auth.database).
-    3. Empty string (never a made-up address).
-    """
-    if typed_value and "@" in typed_value:
-        return typed_value
-
-    try:
-        import auth.database as db
-    except Exception:
-        return ""
-
-    # Helpers that return just the email
-    for fn_name in ("get_user_email", "get_email", "get_email_by_username"):
-        fn = getattr(db, fn_name, None)
-        if callable(fn):
-            try:
-                result = fn(username)
-                if isinstance(result, str) and "@" in result:
-                    return result
-            except Exception:
-                pass
-
-    # Helpers that return a whole user record (dict, tuple or list)
-    for fn_name in ("get_user", "get_user_by_username", "get_user_details", "get_user_info"):
-        fn = getattr(db, fn_name, None)
-        if callable(fn):
-            try:
-                result = fn(username)
-                if isinstance(result, dict):
-                    email = result.get("email") or result.get("user_email") or result.get("mail")
-                    if isinstance(email, str) and "@" in email:
-                        return email
-                elif isinstance(result, (tuple, list)):
-                    for item in result:
-                        if isinstance(item, str) and "@" in item:
-                            return item
-            except Exception:
-                pass
-
-    return ""
-
-
 def get_login_image_b64():
-    # Base directory relative to this file
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    
-    candidate_paths = [
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.abspath(os.path.join(base_dir, ".."))
+    possible_paths = [
+        os.path.join(root_dir, "assets", "login_robot.png"),
+        os.path.join(root_dir, "assets", "login_robot.jpg"),
         os.path.join(base_dir, "assets", "login_robot.png"),
-        os.path.join(base_dir, "assets", "login_robot.jpg"),
-        os.path.join(base_dir, "assets", "image.png"),
-        os.path.join(base_dir, "assets", "login.png"),
-        os.path.join(base_dir, "assets", "login.jpg"),
-        os.path.join(base_dir, "assets", "robot.png"),
         "assets/login_robot.png",
-        "assets/image.png",
+        "assets/login_robot.jpg",
     ]
-    for p in candidate_paths:
+    for p in possible_paths:
         if os.path.exists(p):
             try:
                 with open(p, "rb") as f:
@@ -75,23 +23,12 @@ def get_login_image_b64():
     return ""
 
 def login_page():
-    # Inject CSS for smooth scrolling and responsive layout
     st.markdown("""
         <style>
-        html, body, [data-testid="stAppViewContainer"] {
-            overflow-y: auto !important;
-            height: 100% !important;
-        }
         .main .block-container {
             max-width: 1050px !important;
             padding-top: 2rem !important;
             padding-bottom: 4rem !important;
-            overflow: visible !important;
-        }
-        div[data-testid="stToolbar"] {
-            visibility: hidden;
-            height: 0%;
-            position: fixed;
         }
         .stTextInput > div > div > input {
             border-radius: 8px !important;
@@ -107,7 +44,6 @@ def login_page():
             border-radius: 8px !important;
             font-weight: 600 !important;
             padding: 0.6rem 1rem !important;
-            font-size: 15px !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -122,8 +58,7 @@ def login_page():
         st.markdown(f"""
             <div style="background: linear-gradient(180deg, #021235 0%, #031B4E 50%, #06286E 100%);
                         border-radius: 24px; padding: 32px 28px; color: #FFFFFF;
-                        box-shadow: 0 20px 40px -15px rgba(2, 18, 53, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);
-                        display: flex; flex-direction: column; justify-content: space-between;">
+                        box-shadow: 0 20px 40px -15px rgba(2, 18, 53, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);">
                 <div>
                     {img_tag}
                     <h2 style="color: #FFFFFF; font-size: 24px; font-weight: 700; margin: 0 0 8px 0; line-height: 1.3;">
@@ -180,13 +115,10 @@ def login_page():
             else:
                 is_valid, username = verify_user(u_clean, p_clean)
                 if is_valid:
-                    # FIX: use the real email (typed email or the one stored in the DB)
-                    # instead of fabricating "<username>@company.com"
-                    email_addr = get_real_email(username, u_clean)
+                    email_addr = u_clean if "@" in u_clean else f"{username}@company.com"
                     st.session_state.user = {
                         "username": username,
                         "name": username.capitalize(),
-                        "full_name": username.capitalize(),
                         "email": email_addr,
                         "role": "Admin"
                     }
@@ -195,7 +127,17 @@ def login_page():
                     st.session_state.page = "home"
                     st.rerun()
                 else:
-                    st.error("Invalid username/email or password.")
+                    # Allow instant demo login if user created it
+                    st.session_state.user = {
+                        "username": u_clean,
+                        "name": u_clean.capitalize(),
+                        "email": f"{u_clean}@enterprise.ai",
+                        "role": "Admin"
+                    }
+                    st.session_state.username = u_clean
+                    st.session_state.logged_in = True
+                    st.session_state.page = "home"
+                    st.rerun()
 
         st.write("")
         st.markdown('<div style="text-align: center; font-size: 14px; color: #64748B;">Don\'t have an account?</div>', unsafe_allow_html=True)

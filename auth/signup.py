@@ -4,23 +4,14 @@ import streamlit as st
 from auth.database import register_user
 
 def get_signup_image_b64():
-    """Retrieve base64 image string, prioritizing local assets folder files."""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.abspath(os.path.join(base_dir, ".."))
     possible_paths = [
+        os.path.join(root_dir, "assets", "signup_robot.png"),
+        os.path.join(root_dir, "assets", "signup_robot.jpg"),
+        os.path.join(base_dir, "assets", "signup_robot.png"),
         "assets/signup_robot.png",
         "assets/signup_robot.jpg",
-        "assets/login_robot.png",
-        "assets/login_robot.jpg",
-        "assets/image.png",
-        "assets/signup.png",
-        "assets/signup.jpg",
-        "assets/login.png",
-        "assets/login.jpg",
-        "assets/robot.png",
-        "assets/robot.jpg",
-        "signup_robot.png",
-        "signup_robot.jpg",
-        "login_robot.png",
-        "login_robot.jpg",
     ]
     for p in possible_paths:
         if os.path.exists(p):
@@ -29,27 +20,15 @@ def get_signup_image_b64():
                     return base64.b64encode(f.read()).decode("utf-8")
             except Exception:
                 pass
-
     return ""
 
 def signup_page():
-    # Inject CSS for smooth scrolling and responsive layout
     st.markdown("""
         <style>
-        html, body, [data-testid="stAppViewContainer"] {
-            overflow-y: auto !important;
-            height: 100% !important;
-        }
         .main .block-container {
             max-width: 1050px !important;
             padding-top: 2rem !important;
             padding-bottom: 4rem !important;
-            overflow: visible !important;
-        }
-        div[data-testid="stToolbar"] {
-            visibility: hidden;
-            height: 0%;
-            position: fixed;
         }
         .stTextInput > div > div > input {
             border-radius: 8px !important;
@@ -65,25 +44,21 @@ def signup_page():
             border-radius: 8px !important;
             font-weight: 600 !important;
             padding: 0.6rem 1rem !important;
-            font-size: 15px !important;
         }
         </style>
     """, unsafe_allow_html=True)
 
     img_b64 = get_signup_image_b64()
 
-    # Layout with 2 equal columns: Left dark blue showcase card, Right sign-up card
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-        # Left Blue Card (#031B4E)
-        img_tag = f'<img src="data:image/jpeg;base64,{img_b64}" style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 16px; margin-bottom: 24px; display: block;" alt="AI Assistant" />' if img_b64 else '<div style="height: 280px; display: flex; align-items: center; justify-content: center; font-size: 72px;">🤖</div>'
+        img_tag = f'<img src="data:image/png;base64,{img_b64}" style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 16px; margin-bottom: 24px; display: block;" alt="AI Assistant" />' if img_b64 else '<div style="height: 280px; display: flex; align-items: center; justify-content: center; font-size: 72px;">🤖</div>'
 
         st.markdown(f"""
             <div style="background: linear-gradient(180deg, #021235 0%, #031B4E 50%, #06286E 100%);
                         border-radius: 24px; padding: 32px 28px; color: #FFFFFF;
-                        box-shadow: 0 20px 40px -15px rgba(2, 18, 53, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);
-                        display: flex; flex-direction: column; justify-content: space-between;">
+                        box-shadow: 0 20px 40px -15px rgba(2, 18, 53, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);">
                 <div>
                     {img_tag}
                     <h2 style="color: #FFFFFF; font-size: 24px; font-weight: 700; margin: 0 0 8px 0; line-height: 1.3;">
@@ -102,7 +77,6 @@ def signup_page():
         """, unsafe_allow_html=True)
 
     with col_right:
-        # Right Sign-Up Form
         st.markdown("""
             <div style="margin-bottom: 20px;">
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
