@@ -22,6 +22,16 @@ def get_signup_image_b64():
                 pass
     return ""
 
+# NEW: Continue with Google button
+def google_button(key):
+    st.markdown(
+        '<div style="text-align:center; font-size:13px; color:#94A3B8; margin:12px 0;">— or —</div>',
+        unsafe_allow_html=True,
+    )
+    if st.button("Continue with Google", icon=":material/login:",
+                 use_container_width=True, key=key):
+        st.login()
+
 def signup_page():
     st.markdown("""
         <style>
@@ -129,6 +139,9 @@ def signup_page():
                     st.rerun()
                 else:
                     st.error(msg)
+
+        # NEW: Continue with Google
+        google_button("btn_google_signup")
 
         st.write("")
         st.markdown('<div style="text-align: center; font-size: 14px; color: #64748B;">Already have an account?</div>', unsafe_allow_html=True)

@@ -65,10 +65,18 @@ def settings_page():
         st.caption("Signing out clears your session on this device.")
 
         if st.button("🚪 Logout", key="settings_logout_btn", type="primary"):
+            is_google_user = getattr(st.user, "is_logged_in", False)
+
+            # Clear the app's own session
             for k in list(st.session_state.keys()):
                 del st.session_state[k]
             st.session_state["logged_in"] = False
-            st.rerun()
+            st.session_state["page"] = "login"   # land on the login page
+
+            if is_google_user:
+                st.logout()   # signs out of Google and reruns
+            else:
+                st.rerun()
 
 
 __all__ = ["settings_page"]
