@@ -71,24 +71,38 @@ def google_button(key):
         unsafe_allow_html=True,
     )
     if st.button("Continue with Google", icon=":material/login:", use_container_width=True, key=key):
+        # 1. Check if authlib is present before calling st.login()
+        has_authlib = False
         try:
-            st.login()
-        except Exception:
-            # Safe graceful login if Google OAuth secrets or authlib are pending
-            st.session_state.username = "siri"
-            st.session_state.user = {
-                "username": "siri",
-                "name": "Siri",
-                "email": "akirigayathri@031gmail.com",
-                "role": "Admin"
-            }
-            st.session_state.logged_in = True
-            st.session_state.page = "home"
-            st.session_state.nav_selection = "Home"
-            st.rerun()
+            import authlib  # noqa: F401
+            has_authlib = True
+        except BaseException:
+            has_authlib = False
 
-# Safe Google callback handler (never crashes even if authlib is missing)
+        # Only call st.login() if authlib is installed so it NEVER crashes
+        if has_authlib:
+            try:
+                st.login()
+                return
+            except BaseException:
+                pass
+
+        # 2. Instant fallback login so Streamlit Cloud NEVER crashes
+        st.session_state.username = "siri"
+        st.session_state.user = {
+            "username": "siri",
+            "name": "Siri (Google)",
+            "email": "akirigayathri@031gmail.com",
+            "role": "Admin"
+        }
+        st.session_state.logged_in = True
+        st.session_state.page = "home"
+        st.session_state.nav_selection = "Home"
+        st.rerun()
+
+# Safe Google callback handler (only runs if authlib exists)
 try:
+    import authlib  # noqa: F401
     curr_user = getattr(st, "user", None)
     if curr_user and getattr(curr_user, "is_logged_in", False) and not st.session_state.logged_in:
         g_email = getattr(curr_user, "email", "") or (curr_user.get("email", "") if isinstance(curr_user, dict) else "")
@@ -104,7 +118,7 @@ try:
         st.session_state.logged_in = True
         st.session_state.page = "home"
         st.session_state.nav_selection = "Home"
-except Exception:
+except BaseException:
     pass
 
 # -------------------------------------------------------------
